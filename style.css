@@ -1,0 +1,258 @@
+body {
+    font-family: sans-serif;
+    margin: 5px auto;
+    padding: 0px;
+    max-width: 600px;
+    box-sizing: border-box;
+}
+
+.hidden-when-disconnected {
+  display: none !important;
+}
+
+.not-pro {
+    display: none !important;
+}
+
+.status-box {
+    border: 1px solid #bbb;
+    border-radius: 6px 6px 0 0;
+    border-bottom: 0;
+    background: #f8fafd;
+    padding: 10px 16px;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+    max-width: 600px; 
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.status-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.connected {
+    color: #228c22;   /* Green */
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.disconnected {
+    color: #d70022;   /* Red */
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.version {
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.status-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 16px;
+}
+
+.torque-bar-container {
+  position: relative;
+  width: 70px;
+  height: 10px;
+  background: #eee;
+  border-radius: 3px;
+  margin-bottom: 1px;
+  overflow: hidden;
+  border: 1px solid #bbb;
+}
+.torque-bar-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  height: 100%;
+  background: #4caf50; /* solid color, change as needed */
+  border-radius: 3px;
+  width: 0;
+  z-index: 1;
+}
+.torque-bar-center {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #888;
+  opacity: 0.5;
+  transform: translateX(-1px);
+  z-index: 2;
+}
+
+#wheelSvg {
+  width: 70px;
+  height: 70px;
+  display: block;
+  margin-top: 8px;
+
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 0px;
+    gap: 5px;
+}
+.tab {
+    flex: 1;
+    padding: 10px 0px;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    justify-content: center;
+    background: #f5f5f5;
+    cursor: pointer;
+    margin: 0px;
+    border-radius: 6px 6px 0 0;
+    font-weight: bold;
+    text-align: center;
+    transition: background 0.2s;
+}
+.tab.active {
+    background: #fff;
+    border-bottom: 1px solid #fff;
+    color: #0078d7;
+}
+h2 {
+    margin-top: 8px;
+}
+.section {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    align-self: center;
+    padding: 10px;
+    margin-bottom: 20px;
+    max-width: 600px;
+    border-radius: 6px;
+    background: #fff;
+}
+.control {
+    margin: 6px 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+}
+label {
+    display: inline-block;
+    min-width: 270px;
+    width: 270px;
+    margin-right: 0px;
+    text-align: left;
+}
+.control input[type="range"] {
+    margin-left: 0;
+    flex: 1 1 120px;
+    min-width: 120px;
+    max-width: 300px;
+}
+.control input[type="number"] {
+    margin-left: 0;
+    width: 60px;
+    height: 22px;
+    box-sizing: border-box;
+}
+.control select {
+    width: 60px;
+    height: 22px;
+    margin-left: 0;
+}
+button {
+    display: flex;
+    margin: 0px;
+    padding: 5px 10px;
+    justify-content: center;  /* Center text horizontally */
+    align-items: center;     /* Center text vertically */
+    text-align: center;      /* Ensure text is centered */
+}
+.bottom-buttons {
+    display: flex;
+    margin-top: 10px;
+    justify-content: center;
+    gap: 10px;
+}
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+
+#log-container {
+    margin-top: 0;
+    margin-bottom: 20px;
+    border: 1px solid #bbb;
+    border-radius: 0 0 6px 6px;
+    background: #fbfbfb;
+    resize: vertical;
+    overflow: hidden;
+    min-height: 90px;
+    max-height: 400px;
+    height: 150px;
+    transition: max-height 0.1s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+#log-header {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    background: #f2f4f7;
+    padding: 4px 10px;
+    user-select: none;
+    border-bottom: 1px solid #ccc;
+}
+#log-arrow {
+    font-size: 1.1em;
+    margin-right: 8px;
+    display: inline-block;
+}
+#log-content {
+    padding: 8px 10px;
+    font-size: 0.8em;
+    font-family: monospace;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    background: #fbfbfb;
+    display: block;
+    transition: height 0.1s;
+}
+
+#log-container.closed{
+    min-height: 30px;
+    max-height: 30px; 
+    height: 30px;
+    overflow: hidden;
+}
+
+#log-container.closed #log-content {
+    display: none;
+}
+#log-container.closed #log-arrow {
+    transform: rotate(0deg);
+}
+#log-container.open #log-arrow {
+    transform: rotate(90deg);
+}
+#connectBtn {
+    margin-bottom: 10px;
+}

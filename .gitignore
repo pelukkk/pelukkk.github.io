@@ -1,0 +1,23 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE folders
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Logs
+*.log
+
+# Python cache (if you use Python scripts)
+__pycache__/
+*.pyc
+
+# Node modules (if you ever use npm)
+node_modules/
+
+# Build/dist folders (if you add a build step)
+dist/
+build/

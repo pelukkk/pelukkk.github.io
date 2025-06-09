@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>webFFBeast Wheel Settings</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="assets/favicon.ico">
+</head>
+
+<body>
+  <script type="module" src="js/main.js"></script>
+
+  <h1>FFBeast Wheel Settings</h1>
+
+<div class="status-box">
+  <div class="status-row">
+    <button id="connectBtn">Connect</button>
+    <div class="status-info">
+      <span id="connectionStatus" class="disconnected">DISCONNECTED</span>
+      <span id="versionInfo" class="version"></span>
+    </div>
+    
+    <div class="status-visual">
+      <!-- Torque bar and wheel SVG here -->
+      <div id="torqueBarContainer" class="torque-bar-container">
+        <div id="torqueBarFill" class="torque-bar-fill"></div>
+        <div class="torque-bar-center"></div>
+      </div>
+      <img id="wheelSvg" src="assets/wheel.svg" width="70" height="70" alt="Wheel">
+    </div>
+  </div>
+</div>
+
+
+
+  <div id="log-container" class="closed">
+    <div id="log-header">
+      <span id="log-arrow">&#9654;</span>
+      <span style="font-weight:bold;">Log</span>
+    </div>
+    <div id="log-content"></div>
+  </div>
+
+
+
+  <div class="tabs hidden-when-disconnected">
+    <div class="tab active" data-tab="effects">Effects</div>
+    <div class="tab" data-tab="periphery">Periphery</div>
+    <div class="tab" data-tab="controller">Controller</div>
+    <div class="tab" data-tab="license">License</div>
+  </div>
+
+  <div id="effects" class="tab-content active hidden-when-disconnected">
+    <div class="section">
+      <h2>Common</h2>
+      <div class="control">
+        <label for="MotionRange">Motion range (degrees)</label>
+        <input type="range" min="90" max="1440" value="900" step="10">
+        <input type="number" min="0" max="9000" value="900" id="MotionRange" settings-field="SETTINGS_FIELD_MOTION_RANGE">
+      </div>
+      <div class="control">
+        <label for="TotalEffectStrength">Total effect strength (%)</label>
+        <input type="range" min="0" max="100" value="100">
+        <input type="number" min="0" max="100" value="100" id="TotalEffectStrength" settings-field="SETTINGS_FIELD_TOTAL_EFFECT_STRENGTH">
+      </div>
+      <div class="control" data-pro-feature>
+        <label for="IntegratedSpringStrength">Integrated spring strength (%)</label>
+        <input type="range" min="0" max="100" value="0">
+        <input type="number" min="0" max="100" value="0" id="IntegratedSpringStrength" settings-field="SETTINGS_FIELD_INTEGRATED_SPRING_STRENGTH">
+      </div>
+      <div class="control" data-pro-feature>
+        <label for="SoftStopStrength">Soft stop strength (%)</label>
+        <input type="range" min="0" max="100" value="100">
+        <input type="number" min="0" max="100" value="100" id="SoftStopStrength" settings-field="SETTINGS_FIELD_SOFT_STOP_STRENGTH">
+      </div>
+      <div class="control" data-pro-feature>
+        <label for="SoftStopRange">Soft stop range (degrees)</label>
+        <input type="range" min="1" max="45" value="15">
+        <input type="number" min="1" max="45" value="15" id="SoftStopRange" settings-field="SETTINGS_FIELD_SOFT_STOP_RANGE">
+      </div>
+      <div class="control" data-pro-feature>
+        <label for="SoftStopDampeningStrength">Soft stop dampening (%)</label>
+        <input type="range" min="0" max="100" value="35">
+        <input type="number" min="0" max="100" value="35" id="SoftStopDampeningStrength" settings-field="SETTINGS_FIELD_SOFT_STOP_DAMPENING_STRENGTH">
+      </div>
+      <div class="control">
+        <label for="StaticDampeningStrength">Static dampening (%)</label>
+        <input type="range" min="0" max="100" value="0">
+        <input type="number" min="0" max="100" value="0" id="StaticDampeningStrength" settings-field="SETTINGS_FIELD_STATIC_DAMPENING_STRENGTH">
+      </div>
+      <div class="control" data-pro-feature>
+        <label for="DynamicDampeningStrength">Dynamic dampening (%)</label>
+        <input type="range" min="0" max="100" value="0"> 
+        <input type="number" min="0" max="100" value="0" id="DynamicDampeningStrength" settings-field="SETTINGS_FIELD_DYNAMIC_DAMPENING_STRENGTH">
+      </div>
+    </div>
+
+
+    <div class="section">
+      <h2>DirectX FFB</h2>
+      <div class="control">
+        <label for="DirectXConstantDirection">
+          <input type="checkbox" id="DirectXConstantDirection" settings-field="SETTINGS_FIELD_DIRECT_X_CONSTANT_DIRECTION"
+          data-checked-value="1" data-unchecked-value="-1">
+          Invert constant force
+        </label>
+      </div>
+      <div class="control" data-pro-feature>
+        <label for="DirectXSpringStrength">Direct X spring forces strength (%)</label>
+        <input type="range" min="0" max="100" value="100">
+        <input type="number" min="0" max="100" value="100" id="DirectXSpringStrength" settings-field="SETTINGS_FIELD_DIRECT_X_SPRING_STRENGTH">
+      </div>
+      <div class="control" data-pro-feature>
+        <label for="DirectXConstantStrength">Direct X constant forces strength (%)</label>
+        <input type="range" min="0" max="100" value="100">
+        <input type="number" min="0" max="100" value="100" id="DirectXConstantStrength" settings-field="SETTINGS_FIELD_DIRECT_X_CONSTANT_STRENGTH">
+      </div>
+      <div class="control" data-pro-feature>
+        <label for="DirectXPeriodicStrength">Direct X periodic forces strength (%)</label>
+        <input type="range" min="0" max="100" value="100">
+        <input type="number" min="0" max="100" value="100" id="DirectXPeriodicStrength" settings-field="SETTINGS_FIELD_DIRECT_X_PERIODIC_STRENGTH">
+      </div>
+    </div>
+   </div>
+
+
+    <div id="periphery" class="tab-content hidden-when-disconnected">
+      <div class="section">
+        <h2>Periphery</h2>
+        <p>Coming soon...</p>
+      </div>
+    </div>
+
+
+    <div id="controller" class="tab-content hidden-when-disconnected">
+      <div class="section">
+        <h2>Controller</h2>
+        <div class="control">
+          <label for="ForceEnabled">
+            <input type="checkbox" id="ForceEnabled" settings-field="SETTINGS_FIELD_FORCE_ENABLED"
+            data-checked-value="1" data-unchecked-value="0">
+            Enable forces (Require reboot)
+        </label>
+        </div>
+        <div class="control">
+          <label for="EncoderDirection">
+            <input type="checkbox" id="EncoderDirection" settings-field="SETTINGS_FIELD_ENCODER_DIRECTION"
+            data-checked-value="1" data-unchecked-value="-1">
+            Invert joystick output direction
+        </label>
+        </div>
+        <div class="control">
+          <label for="ForceDirection">
+            <input type="checkbox" id="ForceDirection" settings-field="SETTINGS_FIELD_FORCE_DIRECTION"
+            data-checked-value="1" data-unchecked-value="-1">
+          Invert force output direction
+        </label>
+        </div>
+        <div class="control">
+          <label for="DebugTorque">
+            <input type="checkbox" id="DebugTorque" settings-field="SETTINGS_FIELD_DEBUG_TORQUE"
+            data-checked-value="1" data-unchecked-value="0">
+          Debug forces
+        </label>
+        </div>
+        <div class="control" style="display:none;">
+          <label for="AmplifierGain">Current sense gain (Require reboot)</label>        <!--not working for now-->
+          <select id="AmplifierGain" settings-field="SETTINGS_FIELD_AMPLIFIER_GAIN">
+            <option value="AMPLIFIER_GAIN_80">80V/V</option>
+            <option value="AMPLIFIER_GAIN_40">40V/V</option>
+            <option value="AMPLIFIER_GAIN_20">20V/V</option>
+            <option value="AMPLIFIER_GAIN_10">10V/V</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="EncoderCPR">Encoder CPR</label>
+          <input type="number" id="EncoderCPR" min="0" max="65535" value="4800" settings-field="SETTINGS_FIELD_ENCODER_CPR">
+        </div>
+        <div class="control">
+          <label for="PolePairs">Pole pairs</label>
+          <input type="number" id="PolePairs" min="1" max="99" value="15" settings-field="SETTINGS_FIELD_POLE_PAIRS">
+        </div>
+        <div class="control">
+          <label for="ProportionalGain">P gain</label>
+          <input type="range" min="0" max="100" value="10">
+          <input type="number" min="0" max="100" value="10"  id="ProportionalGain" settings-field="SETTINGS_FIELD_P_GAIN">
+        </div>
+        <div class="control">
+          <label for="IntegralGain">I gain</label>
+          <input type="range" min="0" max="1000" value="100">
+          <input type="number" min="0" max="1000" value="100" id="IntegralGain" settings-field="SETTINGS_FIELD_I_GAIN">
+        </div>
+        <div class="control">
+          <label for="PowerLimit">Power limit (%)</label>
+          <input type="range" min="0" max="100" value="5">
+          <input type="number" min="0" max="100" value="5" id="PowerLimit" settings-field="SETTINGS_FIELD_POWER_LIMIT">
+        </div>
+        <div class="control">
+          <label for="CalibrationMagnitude">Calibration magnitude (%)</label>
+          <input type="range" min="0" max="100" value="10">
+          <input type="number" min="0" max="100" value="10" id="CalibrationMagnitude" settings-field="SETTINGS_FIELD_CALIBRATION_MAGNITUDE">
+        </div>
+        <div class="control">
+          <label for="CalibrationSpeed">Calibration speed (%)</label>
+          <input type="range" min="0" max="100" value="100">
+          <input type="number" min="0" max="100" value="100" id="CalibrationSpeed" settings-field="SETTINGS_FIELD_CALIBRATION_SPEED">
+        </div>
+        <div class="control">
+          <label for="BrakingLimit">Braking resistor limit (%)</label>
+          <input type="range" min="0" max="100" value="10">
+          <input type="number" min="0" max="100" value="10" id="BrakingLimit" settings-field="SETTINGS_FIELD_BRAKING_LIMIT">
+        </div>
+        <div class="control" data-pro-feature>
+          <label for="SpeedBufferSize">Speed sample buffer size</label>
+          <input type="range" min="2" max="32" value="2">
+          <input type="number" min="2" max="32" value="2" id="SpeedBufferSize" settings-field="SETTINGS_FIELD_SPEED_BUFFER_SIZE">
+        </div>
+        <div class="control" data-pro-feature>
+          <label for="PositionSmoothing">Position smoothing (%)</label>
+          <input type="range" min="0" max="100" value="0">
+          <input type="number" min="0" max="100" value="0" id="PositionSmoothing" settings-field="SETTINGS_FIELD_POSITION_SMOOTHING">
+        </div>
+      </div>
+    </div>
+
+
+    <div id="license" class="tab-content hidden-when-disconnected">
+      <div class="section">
+        <h2>License</h2>
+        <div class="control">
+          <label for="DeviceId">Device ID</label>
+          <input type="text" id="DeviceId" value="00000000-00000000-00000000" readonly style="font-family:monospace; width:calc(100% - 300px);">
+        </div>
+        <div class="control">
+          <label for="SerialKey">Serial Key</label>
+          <input type="text" id="SerialKey" value="00000000-00000000-00000000" style="font-family:monospace; width:calc(100% - 300px);">
+        </div>
+        <div class="control">
+          <button id="activateBtn" style="width:25%; margin: 0 auto;" disabled>Activate</button>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="bottom-buttons hidden-when-disconnected">
+      <button id="resetCenterBtn">Reset wheel center</button>
+      <button id="saveAndRebootBtn">Save and reboot</button>
+      <button id="switchtoDFUBtn">Switch to DFU mode</button>
+      <button id="rebootControllerBtn">Reboot controller</button>
+    </div>
+
+
+</body>
+</html>
