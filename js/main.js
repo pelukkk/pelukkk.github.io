@@ -239,8 +239,8 @@
       async function updateFirmwareLicense() {
         try {
           const data = await wheelApi.readFirmwareLicense();
-          data.SerialKey = parseNumHex(data.SerialKey); // Convert serial key to hex format
-          data.DeviceId = parseNumHex(data.DeviceId);   // Convert device ID to hex format
+          data.SerialKey = parseNumHexStr(data.SerialKey); // Convert serial key to hex string format
+          data.DeviceId = parseNumHexStr(data.DeviceId);   // Convert device ID to hex string format
           updateElementsFromData(data);
           log('Firmware license updated.');
         } catch (e) {
@@ -248,9 +248,9 @@
         }
       }
 
-      function parseNumHex(array) {
+      function parseNumHexStr(array) {
         return array.map(num => 
-          num.toString(16)          // Convert to hex
+          num.toString(16)          // Convert to hex string
              .toUpperCase()         // Make uppercase
              .padStart(8, '0')      // Pad to 8 digits
         ).join('-');               // Join with dashes
@@ -293,7 +293,6 @@
       
 
 
-
       // Button handlers for bottom-buttons
       document.getElementById('resetCenterBtn').addEventListener('click', async () => {
         try {
@@ -332,6 +331,21 @@
       });
 
 
+      // Activate firmware license button
+      document.getElementById('activateFirmwareBtn').addEventListener('click', async () => {
+        const licenseKey = document.getElementById('SerialKey').value.trim();
+        if (!licenseKey) {
+          log('Error: License key is empty');
+          return;
+        }
+
+        try {
+          await wheelApi.sendFirmwareActivation(licenseKey);
+          log('Try firmware license activation command: ' + licenseKey);
+        } catch (e) {
+          log('Error sending command: ' + e.message);
+        }
+      });
 
       // Combined handler for range/numnber sync and all settings sending
       document.querySelectorAll('.control').forEach(control => {
@@ -406,14 +420,14 @@
 
         try {
           await wheelApi.sendSettingReport(field, 0, value, type);
-          log(`Sent setting: ${fieldName} = ${value} , ${type}`);
+          log(`Try sending setting: ${fieldName} = ${value} , ${type}`);
         } catch (e) {
           log(`Error sending setting: ${e.message}`);
         }
       }
 
 
-          // Log open/close logic
+    // Log open/close logic
     const logContainer = document.getElementById('log-container');
     const logHeader = document.getElementById('log-header');
     const logArrow = document.getElementById('log-arrow');

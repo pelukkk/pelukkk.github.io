@@ -19,7 +19,6 @@ export class WheelApi {
     }
 
 
-
     async connect() {
         const filters = [
         {
@@ -63,7 +62,6 @@ async tryAutoReconnect() {
         return false;
     }
 
-
     
     //readState, Device will be constantly sending interrupt report with the state on vendor interface when device is active
     setupInputReportListener(onStateReceived) {
@@ -85,21 +83,6 @@ async tryAutoReconnect() {
         });
     }
 
-    async saveAndReboot() {
-        return this._sendSimpleCommand(API.ReportTypeEnum.REPORT_GENERIC_INPUT_OUTPUT, API.ReportDataEnum.DATA_COMMAND_SAVE_SETTINGS);
-    }
-
-    async rebootController() {
-        return this._sendSimpleCommand(API.ReportTypeEnum.REPORT_GENERIC_INPUT_OUTPUT, API.ReportDataEnum.DATA_COMMAND_REBOOT);
-    }
-
-    async switchtoDFU() {
-        return this._sendSimpleCommand(API.ReportTypeEnum.REPORT_GENERIC_INPUT_OUTPUT, API.ReportDataEnum.DATA_COMMAND_DFU_MODE);
-    }
-
-    async resetCenter() {
-        return this._sendSimpleCommand(API.ReportTypeEnum.REPORT_GENERIC_INPUT_OUTPUT, API.ReportDataEnum.DATA_COMMAND_RESET_CENTER);
-    }
 
     // Helper: Get the type string for a given field name from the known struct definitions
     getFieldType(fieldName) {
@@ -121,11 +104,7 @@ async tryAutoReconnect() {
         }
         return null; // Not found
     }
-
-
-
-
-    
+   
 
     async readEffectsSettings() {
         return this._readFeatureReport(API.ReportTypeEnum.REPORT_EFFECT_SETTINGS_FEATURE, API.EffectSettingsTypeDef);
@@ -147,16 +126,6 @@ async tryAutoReconnect() {
         return this._readFeatureReport(API.ReportTypeEnum.REPORT_FIRMWARE_LICENSE_FEATURE, API.FirmwareLicenseTypeDef);
     }
 
-
-    async _sendSimpleCommand(reportId, command) {
-        if (!this.device) throw new Error('Device not connected');
-        const buffer = new Uint8Array(65);
-        buffer[0] = reportId;  //<- Not actually used here as it's set in .sendReport
-        buffer[1] = command;
-        await this.device.sendReport(reportId, buffer.slice(1));
-        return 1;
-    }
-
     async _readFeatureReport(reportId, structDef) {
         if (!this.device) throw new Error('Device not connected');
         const report = await this.device.receiveFeatureReport(reportId);
@@ -164,7 +133,34 @@ async tryAutoReconnect() {
         return this._parseStruct(report, structDef, 1);             //Does YES include ReportId, so offset is 1 (discard first byte)
     }
 
-        async sendSettingReport(field, index, value, type) {
+
+    async saveAndReboot() {
+        return this._sendSimpleCommand(API.ReportTypeEnum.REPORT_GENERIC_INPUT_OUTPUT, API.ReportDataEnum.DATA_COMMAND_SAVE_SETTINGS);
+    }
+
+    async rebootController() {
+        return this._sendSimpleCommand(API.ReportTypeEnum.REPORT_GENERIC_INPUT_OUTPUT, API.ReportDataEnum.DATA_COMMAND_REBOOT);
+    }
+
+    async switchtoDFU() {
+        return this._sendSimpleCommand(API.ReportTypeEnum.REPORT_GENERIC_INPUT_OUTPUT, API.ReportDataEnum.DATA_COMMAND_DFU_MODE);
+    }
+
+    async resetCenter() {
+        return this._sendSimpleCommand(API.ReportTypeEnum.REPORT_GENERIC_INPUT_OUTPUT, API.ReportDataEnum.DATA_COMMAND_RESET_CENTER);
+    }    
+
+    async _sendSimpleCommand(reportId, command) {
+        if (!this.device) throw new Error('Device not connected');
+        const buffer = new Uint8Array(65);
+        buffer[0] = reportId;  // Not actually used here as it's set in .sendReport
+        buffer[1] = command;
+        await this.device.sendReport(reportId, buffer.slice(1));
+        return 1;
+    }
+
+
+    async sendSettingReport(field, index, value, type) {
         if (!this.device) throw new Error('Device not connected');
         const reportId = API.ReportTypeEnum.REPORT_GENERIC_INPUT_OUTPUT;
         const buffer = new Uint8Array(65);
@@ -194,6 +190,46 @@ async tryAutoReconnect() {
             default:
                 throw new Error('Unsupported type for settings report');
         }
+
+        await this.device.sendReport(reportId, buffer.slice(1));
+        return 1;
+    }
+
+
+    async sendFirmwareActivation(licenseStr) {
+        if (!this.device) throw new Error('Device not connected');
+        const reportId = API.ReportTypeEnum.REPORT_GENERIC_INPUT_OUTPUT;
+        const buffer = new Uint8Array(65);
+        buffer[0] = reportId;     // actually not used here as it's set with .sendReport
+        buffer[1] = API.ReportDataEnum.DATA_FIRMWARE_ACTIVATION_DATA;
+
+        // Initialize 12 bytes (3 chunks x 4 bytes) with zeros
+        let licenseBytes = new Uint8Array(12).fill(0);
+
+        // Validate and parse license string
+        let valid = false;
+        let chunks = [];
+        if (typeof licenseStr === 'string' && licenseStr.trim() !== '') {
+            chunks = licenseStr.split('-');
+            if (chunks.length === 3) {
+                valid = chunks.every(chunk => /^[0-9A-Fa-f]{1,8}$/.test(chunk));    // Check each chunk is valid hex chars and 1-8 digits
+            }
+        }
+
+        if (valid) {
+            const view = new DataView(licenseBytes.buffer);
+            for (let i = 0; i < 3; i++) {
+                let hex = chunks[i].padStart(8, '0').toUpperCase();     // Pad each chunk to 8 chars, uppercase for consistency
+                let value = parseInt(hex, 16);                          // Parse as 32-bit unsigned integer
+                view.setUint32(i * 4, value, true);                     // true = little-endian
+            }
+        }
+        else {    // If not valid, licenseBytes stays all zeros
+            console.log('Invalid license format. Must be 3 chunks of 1-8 hex digits separated by dashes.');
+        }
+    
+        // Copy license bytes into the buffer starting at buffer[2]
+        buffer.set(licenseBytes, 2);
 
         await this.device.sendReport(reportId, buffer.slice(1));
         return 1;
