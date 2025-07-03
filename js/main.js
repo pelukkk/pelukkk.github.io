@@ -365,13 +365,21 @@
         }
 
         if (range && fieldElem) {
-          range.addEventListener('change', async () => {      // Send setting when value changes
+          range.addEventListener('pointerup', async () => {   // Mouse/touch release
             await triggerSettingSend(fieldElem);
           });
-          range.addEventListener('pointerup', async () => {   // Also send setting when user releases slider
+          range.addEventListener('keyup', async (e) => {      // Keyboard arrows and Enter
+            if (
+              ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown', 'Enter'].includes(e.key)
+            ) {
+              await triggerSettingSend(fieldElem);
+            }
+          });
+          range.addEventListener('blur', async () => {      // When focus is lost (why not)
             await triggerSettingSend(fieldElem);
           });
         }
+
         if (number && fieldElem) {
           number.addEventListener('change', async () => {     // Only send setting when value changes
             // Clamp value to min/max
@@ -380,13 +388,18 @@
             let val = Number(number.value);
             if (!isNaN(min) && val < min) val = min;
             if (!isNaN(max) && val > max) val = max;
-            if (val !== Number(number.value)) {
-              number.value = val;
-              if (range) range.value = val;
-            }
+            if (val !== Number(number.value)) number.value = val;
+              if (range) {
+                if (val > Number(range.max)) {
+                  range.setAttribute('max', val); 
+                } 
+                range.value = val;
+              }
+            
             await triggerSettingSend(fieldElem);
           });
         }
+        
         if (checkbox && fieldElem) {
           checkbox.addEventListener('change', async () => {
             await triggerSettingSend(fieldElem);
