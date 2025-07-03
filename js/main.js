@@ -351,9 +351,10 @@
       document.querySelectorAll('.control').forEach(control => {
         const range = control.querySelector('input[type="range"]');
         const number = control.querySelector('input[type="number"]');
-        const sendInput = control.querySelector('[settings-field]');
+        const checkbox = control.querySelector('input[type="checkbox"]');
+        const fieldElem = control.querySelector('[settings-field]');
 
-        if (range && number && sendInput) {
+        if (range && number) {
           // Live sync values as user moves slider or types number
           range.addEventListener('input', () => {
             number.value = range.value;
@@ -361,13 +362,18 @@
           number.addEventListener('input', () => {
             range.value = number.value;
           });
+        }
 
-          // Only send setting when user is done (releases slider or leaves number box)
-          range.addEventListener('change', async () => {
-            number.value = range.value;
-            await triggerSettingSend(sendInput);
+        if (range && fieldElem) {
+          range.addEventListener('change', async () => {      // Send setting when value changes
+            await triggerSettingSend(fieldElem);
           });
-          number.addEventListener('change', async () => {
+          range.addEventListener('pointerup', async () => {   // Also send setting when user releases slider
+            await triggerSettingSend(fieldElem);
+          });
+        }
+        if (number && fieldElem) {
+          number.addEventListener('change', async () => {     // Only send setting when value changes
             // Clamp value to min/max
             let min = Number(number.min);
             let max = Number(number.max);
@@ -378,13 +384,12 @@
               number.value = val;
               if (range) range.value = val;
             }
-            range.value = number.value;
-            await triggerSettingSend(sendInput);
+            await triggerSettingSend(fieldElem);
           });
-        } else if (sendInput) {
-          // For checkboxes and selects, send immediately on input/change
-          sendInput.addEventListener('input', async () => {
-            await triggerSettingSend(sendInput);
+        }
+        if (checkbox && fieldElem) {
+          checkbox.addEventListener('change', async () => {
+            await triggerSettingSend(fieldElem);
           });
         }
       });
@@ -397,10 +402,11 @@
           log('Unknown settings field: ' + fieldName);
           return;
         }
-        let value;
+        
         const typeId = input.getAttribute('id');
-        let type = wheelApi.getFieldType(typeId);
-
+        let fieldDataType = wheelApi.getFieldDataType(typeId);
+        
+        let fieldValue;
         if (input.type === "checkbox") {
           const checkedValue = input.getAttribute('data-checked-value');
           const uncheckedValue = input.getAttribute('data-unchecked-value');
@@ -408,19 +414,19 @@
             log(`Error: Checkbox ${fieldName} missing data-checked-value or data-unchecked-value`);
             return;
           }
-          value = input.checked ? Number(checkedValue) : Number(uncheckedValue);
+          fieldValue = input.checked ? Number(checkedValue) : Number(uncheckedValue);
         } else if (input.type === "number" || input.type === "range") {
-          value = Number(input.value);
+          fieldValue = Number(input.value);
         } else if (input.tagName === "SELECT") {
-          value = 0;
+          fieldValue = 0;
         } else {
           log(`Error: Unsupported input type for settings-field ${fieldName} ${field}`);
           return;
         }
 
         try {
-          await wheelApi.sendSettingReport(field, 0, value, type);
-          log(`Try sending setting: ${fieldName} = ${value} , ${type}`);
+          await wheelApi.sendSettingReport(field, 0, fieldValue, fieldDataType);
+          log(`Try sending setting: ${fieldName} = ${fieldValue} , ${fieldDataType}`);
         } catch (e) {
           log(`Error sending setting: ${e.message}`);
         }

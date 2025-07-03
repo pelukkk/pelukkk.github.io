@@ -85,7 +85,7 @@ async tryAutoReconnect() {
 
 
     // Helper: Get the type string for a given field name from the known struct definitions
-    getFieldType(fieldName) {
+    getFieldDataType(fieldName) {
         const structDefs = [
             API.EffectSettingsTypeDef,
             API.HardwareSettingsTypeDef,
