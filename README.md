@@ -12,7 +12,6 @@ Requires a browser with [WebHID](https://developer.mozilla.org/en-US/docs/Web/AP
 
 ## To Do
 - Periphery tab
-- License activation command
 - Export/import settings
 - Simplified quick-settings tab
 - Dark mode
